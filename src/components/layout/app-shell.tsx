@@ -26,6 +26,7 @@ import { SupportDialog } from "@/components/dialogs/SupportDialog";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useIsMobile } from "@/hooks/useBreakpoint";
 import { CommandPalette } from "@/components/CommandPalette";
+import { HowItWorksDialog } from "@/components/dialogs/HowItWorksDialog";
 
 export function AppShell() {
   const isMobile = useIsMobile();
@@ -45,6 +46,7 @@ export function AppShell() {
   const [createComponentDialogOpen, setCreateComponentDialogOpen] = useState(false);
   const [supportDialogOpen, setSupportDialogOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
 
   // Auto-open support dialog when URL has ?support=1 (used by the README link)
   useEffect(() => {
@@ -293,6 +295,7 @@ export function AppShell() {
             onPickProblem={handlePickProblem}
             onLoadReference={handleLoadReference}
             onStartInterview={() => setInterviewDialogOpen(true)}
+            onShowGuide={() => setHowItWorksOpen(true)}
           />
 
           {/* Desktop inline right panel (hidden on mobile) */}
@@ -403,7 +406,13 @@ export function AppShell() {
             onLoadReference: handleLoadReference,
             onClear: handleClearCanvas,
             onOpenSupport: () => setSupportDialogOpen(true),
+            onShowGuide: () => setHowItWorksOpen(true),
           }}
+        />
+        <HowItWorksDialog
+          open={howItWorksOpen}
+          onClose={() => setHowItWorksOpen(false)}
+          onPickProblem={handlePickProblem}
         />
       </div>
     </ReactFlowProvider>

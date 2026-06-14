@@ -17,7 +17,7 @@ import { edgeTypes } from "./edges/edgeTypes";
 import { useCanvasStore, type ComponentNodeData } from "@/store/canvasStore";
 import { usePenStore } from "@/store/penStore";
 import { getComponentById } from "@/data/components";
-import { BookOpen, GraduationCap, Layers, Lock, MousePointer2, Sparkles } from "lucide-react";
+import { BookOpen, GraduationCap, Layers, Lock, MousePointer2, Sparkles, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Orchestrated staggered reveal for the empty state — one deliberate page-load
@@ -38,9 +38,10 @@ interface DesignCanvasProps {
   onPickProblem?: () => void;
   onLoadReference?: () => void;
   onStartInterview?: () => void;
+  onShowGuide?: () => void;
 }
 
-export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview }: DesignCanvasProps = {}) {
+export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview, onShowGuide }: DesignCanvasProps = {}) {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition, fitView } = useReactFlow();
 
@@ -248,6 +249,17 @@ export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview 
                 Pick a problem, drop infrastructure components onto the canvas, and get scored the way an interviewer would evaluate you.
               </p>
             </motion.div>
+
+            {onShowGuide && (
+              <motion.button
+                variants={emptyItem}
+                onClick={onShowGuide}
+                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700/70 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+              >
+                <HelpCircle className="h-3.5 w-3.5" />
+                New here? See how it works
+              </motion.button>
+            )}
 
             <motion.div variants={emptyItem} className="grid w-full gap-2 sm:grid-cols-3">
               <QuickStartCard

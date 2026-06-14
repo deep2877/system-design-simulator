@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useReactFlow, type Node } from "@xyflow/react";
 import {
   Search, Play, Trophy, Save, FolderOpen, GraduationCap, Download,
-  Trash2, Undo2, Redo2, Coffee, Box, Puzzle, CornerDownLeft,
+  Trash2, Undo2, Redo2, Coffee, Box, Puzzle, CornerDownLeft, HelpCircle,
 } from "lucide-react";
 import { SYSTEM_COMPONENTS } from "@/data/components";
 import type { SystemComponent } from "@/types/component";
@@ -36,6 +36,7 @@ interface CommandPaletteProps {
     onLoadReference: () => void;
     onClear: () => void;
     onOpenSupport: () => void;
+    onShowGuide: () => void;
   };
 }
 
@@ -121,6 +122,7 @@ export function CommandPalette({ open, onClose, actions }: CommandPaletteProps) 
   const items = useMemo<CommandItem[]>(() => {
     const a = actions;
     const actionItems: CommandItem[] = [
+      { id: "act-guide", group: "Actions", label: "How SystemForge works", icon: HelpCircle, run: a.onShowGuide },
       { id: "act-sim", group: "Actions", label: "Run simulation", hint: "⌘↵", icon: Play, run: a.onSimulate },
       { id: "act-score", group: "Actions", label: "Score design", hint: "⌘⇧S", icon: Trophy, run: a.onScore },
       { id: "act-ref", group: "Actions", label: "Load reference solution", icon: Download, run: a.onLoadReference },
