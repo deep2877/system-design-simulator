@@ -5,9 +5,36 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, Trophy } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSimulationStore } from "@/store/simulationStore";
 import type { CategoryScore } from "@/types/scoring";
+
+/** Animate a number from 0 → target over ~1s, synced with the ring sweep. */
+function useCountUp(target: number, durationMs = 1000) {
+  const [value, setValue] = useState(0);
+  const frame = useRef<number | null>(null);
+  useEffect(() => {
+    // Respect reduced-motion: jump straight to the value.
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setValue(target);
+      return;
+    }
+    let start: number | null = null;
+    const tick = (t: number) => {
+      if (start === null) start = t;
+      const p = Math.min((t - start) / durationMs, 1);
+      // easeOut to match the ring's easing
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(target * eased));
+      if (p < 1) frame.current = requestAnimationFrame(tick);
+    };
+    frame.current = requestAnimationFrame(tick);
+    return () => {
+      if (frame.current !== null) cancelAnimationFrame(frame.current);
+    };
+  }, [target, durationMs]);
+  return value;
+}
 
 function CategorySection({ category }: { category: CategoryScore }) {
   const [expanded, setExpanded] = useState(false);
@@ -95,6 +122,7 @@ function verdictBgClass(verdictColor: string): string {
 
 export function ScoreReport() {
   const scoreResult = useSimulationStore((s) => s.scoreResult);
+  const animatedTotal = useCountUp(scoreResult?.total ?? 0);
 
   if (!scoreResult) {
     return (
@@ -148,8 +176,8 @@ export function ScoreReport() {
               );
             })()}
             <div className="absolute flex flex-col items-center">
-              <span className="font-mono text-3xl font-bold text-zinc-100">
-                {scoreResult.total}
+              <span className="font-mono text-3xl font-bold text-zinc-100 tabular-nums">
+                {animatedTotal}
               </span>
               <span className="text-[11px] text-zinc-400">/ 100</span>
             </div>

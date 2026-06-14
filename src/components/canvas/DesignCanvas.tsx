@@ -189,6 +189,8 @@ export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview 
         elementsSelectable={!penActive}
         connectionRadius={30}
         deleteKeyCode={null}
+        snapToGrid
+        snapGrid={[16, 16]}
       >
         <Background
           variant={BackgroundVariant.Dots}

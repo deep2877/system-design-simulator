@@ -24,9 +24,11 @@ import {
   Coffee,
   Undo2,
   Redo2,
+  Loader2,
 } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useCanvasStore } from "@/store/canvasStore";
+import { useSimulationStore } from "@/store/simulationStore";
 import { usePenStore } from "@/store/penStore";
 import { PROBLEMS } from "@/data/problems";
 import { useCustomProblemsStore } from "@/store/customProblemsStore";
@@ -55,6 +57,7 @@ export function TopBar({ onSimulate, onScore, onClearCanvas, onSave, onLoad, onS
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const { screenToFlowPosition } = useReactFlow();
   const addNode = useCanvasStore((s) => s.addNode);
+  const isSimulating = useSimulationStore((s) => s.isRunning);
 
   // Undo/redo — subscribe to stack lengths so the buttons enable/disable reactively
   const canUndo = useCanvasStore((s) => s.history.length > 0);
@@ -495,10 +498,20 @@ export function TopBar({ onSimulate, onScore, onClearCanvas, onSave, onLoad, onS
         <Button
           size="sm"
           onClick={onSimulate}
-          className="h-7 gap-1.5 bg-cyan-500 px-3 text-xs font-medium text-white hover:bg-cyan-400"
+          disabled={isSimulating}
+          className="h-7 gap-1.5 bg-cyan-500 px-3 text-xs font-medium text-white transition-colors hover:bg-cyan-400 disabled:opacity-80"
         >
-          <Play className="h-3 w-3" />
-          <span className="hidden sm:inline">Simulate</span>
+          {isSimulating ? (
+            <>
+              <Loader2 className="h-3 w-3 animate-spin" />
+              <span className="hidden sm:inline">Simulating…</span>
+            </>
+          ) : (
+            <>
+              <Play className="h-3 w-3" />
+              <span className="hidden sm:inline">Simulate</span>
+            </>
+          )}
         </Button>
         <Button
           size="sm"
