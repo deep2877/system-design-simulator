@@ -11,6 +11,15 @@ const STATUS_COLOR: Record<string, string> = {
   idle: "bg-zinc-600",
 };
 
+/** Compact K/M/B abbreviation for large counts (Grafana-style). */
+function abbrev(n: number): string {
+  if (!Number.isFinite(n)) return "∞";
+  if (n >= 1e9) return (n / 1e9).toFixed(n % 1e9 === 0 ? 0 : 1) + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(n % 1e6 === 0 ? 0 : 1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(n % 1e3 === 0 ? 0 : 1) + "K";
+  return String(Math.round(n));
+}
+
 export function MetricsDisplay() {
   const result = useSimulationStore((s) => s.result);
   const nodes = useCanvasStore((s) => s.nodes);
@@ -37,21 +46,22 @@ export function MetricsDisplay() {
 
   return (
     <div className="space-y-3">
-      {/* Summary */}
+      {/* Summary — big tabular value, dimmed inline unit, muted uppercase label */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-md bg-zinc-800 px-2.5 py-2">
-          <p className="text-[11px] text-zinc-500">Throughput</p>
-          <p className="font-mono text-sm font-semibold text-zinc-100">
-            {new Intl.NumberFormat("en-US").format(result.throughput)}
+        <div className="rounded-lg bg-zinc-800/70 px-3 py-2.5">
+          <p className="metric-label text-[10px]">Throughput</p>
+          <p className="metric-value mt-1 font-mono text-2xl font-semibold leading-none text-zinc-50">
+            {abbrev(result.throughput)}
+            <span className="ml-1 align-baseline text-xs font-normal text-zinc-500">req/s</span>
           </p>
-          <p className="text-[11px] text-zinc-500">req/s</p>
         </div>
-        <div className="rounded-md bg-zinc-800 px-2.5 py-2">
-          <p className="text-[11px] text-zinc-500">Total Latency</p>
-          <p className="font-mono text-sm font-semibold text-zinc-100">
+        <div className="rounded-lg bg-zinc-800/70 px-3 py-2.5">
+          <p className="metric-label text-[10px]">Total Latency</p>
+          <p className="metric-value mt-1 font-mono text-2xl font-semibold leading-none text-zinc-50">
             {result.totalLatencyMs.toFixed(0)}
+            <span className="ml-1 align-baseline text-xs font-normal text-zinc-500">ms</span>
           </p>
-          <p className="text-[11px] text-zinc-500">ms (longest path)</p>
+          <p className="mt-1 text-[10px] text-zinc-500">longest path</p>
         </div>
       </div>
 
@@ -93,13 +103,13 @@ export function MetricsDisplay() {
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <p className="text-[10px] text-zinc-400">QPS</p>
-                    <p className="font-mono text-xs text-zinc-300">
-                      {m.incomingQPS.toFixed(0)}
+                    <p className="metric-label text-[9px]">QPS</p>
+                    <p className="font-mono text-xs tabular-nums text-zinc-200">
+                      {abbrev(m.incomingQPS)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-zinc-400">Util</p>
+                    <p className="metric-label text-[9px]">Util</p>
                     <div className="flex items-center gap-1">
                       <div className="h-1 w-8 overflow-hidden rounded-full bg-zinc-700">
                         <div
@@ -119,8 +129,8 @@ export function MetricsDisplay() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] text-zinc-400">Latency</p>
-                    <p className="font-mono text-xs text-zinc-300">
+                    <p className="metric-label text-[9px]">Latency</p>
+                    <p className="font-mono text-xs tabular-nums text-zinc-200">
                       {m.latencyMs.toFixed(0)}ms
                     </p>
                   </div>

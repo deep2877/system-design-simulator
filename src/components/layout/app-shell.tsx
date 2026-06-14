@@ -28,6 +28,7 @@ import { useIsMobile } from "@/hooks/useBreakpoint";
 import { CommandPalette } from "@/components/CommandPalette";
 import { HowItWorksDialog } from "@/components/dialogs/HowItWorksDialog";
 import { Walkthrough } from "@/components/Walkthrough";
+import { rehydrateAllStores } from "@/store/hydration";
 
 export function AppShell() {
   const isMobile = useIsMobile();
@@ -49,6 +50,14 @@ export function AppShell() {
   const [commandOpen, setCommandOpen] = useState(false);
   const [howItWorksOpen, setHowItWorksOpen] = useState(false);
   const [walkthroughOpen, setWalkthroughOpen] = useState(false);
+
+  // Load persisted state from localStorage once, after mount. All stores use
+  // `skipHydration: true` (so SSR and first client render agree), so without
+  // this call nothing would ever be restored — the canvas, saved designs,
+  // custom components, etc. would reset on every refresh / new tab.
+  useEffect(() => {
+    rehydrateAllStores();
+  }, []);
 
   // Auto-open support dialog when URL has ?support=1 (used by the README link)
   useEffect(() => {

@@ -4,13 +4,48 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ──────────────────────────────────────────────────────────────────────────
+   PALETTE REMAP — the single highest-leverage "de-AI" change.
+   The whole app uses Tailwind `zinc-*` and `cyan-*` utilities. We override
+   those scales here, so every surface/border/text/accent picks up a deliberate,
+   cool-tinted near-black ramp (Radix-Slate-class, OKLCH, hue ~240) and a
+   refined, desaturated cyan accent — with zero per-component churn.
+
+   Principles applied (from the research): colored neutrals (never flat gray),
+   luminance-based elevation, AA-contrast text, and an accent that's calm on
+   dark (full-saturation cyan "burns" on near-black).
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Cool near-black neutral ramp (hue 240, low chroma). Drives every
+     bg-zinc-*, border-zinc-*, text-zinc-* in the app. */
+  --color-zinc-50:  oklch(0.98 0.004 240);
+  --color-zinc-100: oklch(0.95 0.006 240);
+  --color-zinc-200: oklch(0.90 0.008 240);
+  --color-zinc-300: oklch(0.82 0.011 240);
+  --color-zinc-400: oklch(0.72 0.014 240);  /* body / labels — AA on panels */
+  --color-zinc-500: oklch(0.62 0.015 240);  /* muted / hints */
+  --color-zinc-600: oklch(0.50 0.016 240);
+  --color-zinc-700: oklch(0.38 0.018 240);  /* strong borders, hover */
+  --color-zinc-800: oklch(0.29 0.017 240);  /* borders, chips, inputs */
+  --color-zinc-900: oklch(0.225 0.016 240); /* panels, nodes, cards, dialogs */
+  --color-zinc-950: oklch(0.14 0.013 240);  /* deepest wells */
+
+  /* Refined cyan accent — calm on near-black but vibrant enough to read as
+     "the action color"; used on actions / active / selected / focus / links. */
+  --color-cyan-300: oklch(0.87 0.11 200);
+  --color-cyan-400: oklch(0.82 0.13 198);
+  --color-cyan-500: oklch(0.74 0.14 197);   /* primary accent */
+  --color-cyan-600: oklch(0.66 0.14 200);
+  --color-cyan-700: oklch(0.57 0.12 203);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -85,40 +120,40 @@
 }
 
 .dark {
-  /* Deep, faintly-cool "developer tool" dark palette. A tiny chroma at a cool
-     hue (265) reads as a deliberate slate rather than flat neutral gray, and
-     harmonizes with the zinc-* utility classes used across components. */
-  --background: oklch(0.145 0.006 265);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.195 0.007 265);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0.008 265);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.18 0 0);
-  --secondary: oklch(0.255 0.008 265);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.255 0.008 265);
-  --muted-foreground: oklch(0.708 0.01 265);
-  --accent: oklch(0.255 0.008 265);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.275 0.008 265);
-  --input: oklch(0.29 0.008 265);
-  --ring: oklch(0.62 0.13 210);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.60 0 0);
-  --chart-3: oklch(0.50 0 0);
-  --chart-4: oklch(0.42 0 0);
-  --chart-5: oklch(0.30 0 0);
-  --sidebar: oklch(0.15 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.24 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.24 0 0);
-  --sidebar-ring: oklch(0.50 0 0);
+  /* Cool near-black system (hue 240). The canvas/app floor sits BELOW the
+     panel surfaces, so nodes and panels read as elevated via luminance —
+     not shadows (the Linear move). All neutrals carry a faint cool tint. */
+  --background: oklch(0.145 0.012 240);     /* canvas / app floor — deepest */
+  --foreground: oklch(0.96 0.008 240);      /* primary text (AA+) */
+  --card: oklch(0.225 0.016 240);           /* panels / nodes / cards */
+  --card-foreground: oklch(0.96 0.008 240);
+  --popover: oklch(0.255 0.017 240);        /* floating — lightest surface */
+  --popover-foreground: oklch(0.96 0.008 240);
+  --primary: oklch(0.95 0.008 240);
+  --primary-foreground: oklch(0.18 0.013 240);
+  --secondary: oklch(0.27 0.015 240);
+  --secondary-foreground: oklch(0.95 0.008 240);
+  --muted: oklch(0.27 0.015 240);
+  --muted-foreground: oklch(0.72 0.014 240); /* labels (AA on panels) */
+  --accent: oklch(0.27 0.015 240);
+  --accent-foreground: oklch(0.95 0.008 240);
+  --destructive: oklch(0.62 0.20 25);
+  --border: oklch(0.27 0.015 240);
+  --input: oklch(0.30 0.015 240);
+  --ring: oklch(0.74 0.14 197);            /* refined cyan focus */
+  --chart-1: oklch(0.74 0.14 197);
+  --chart-2: oklch(0.70 0.13 150);
+  --chart-3: oklch(0.74 0.14 85);
+  --chart-4: oklch(0.62 0.16 280);
+  --chart-5: oklch(0.64 0.18 20);
+  --sidebar: oklch(0.185 0.014 240);
+  --sidebar-foreground: oklch(0.95 0.008 240);
+  --sidebar-primary: oklch(0.74 0.14 197);
+  --sidebar-primary-foreground: oklch(0.18 0.013 240);
+  --sidebar-accent: oklch(0.27 0.015 240);
+  --sidebar-accent-foreground: oklch(0.95 0.008 240);
+  --sidebar-border: oklch(0.27 0.015 240);
+  --sidebar-ring: oklch(0.74 0.14 197);
 }
 
 @layer base {
@@ -140,6 +175,9 @@
   .font-mono, [class*="tabular"] {
     font-variant-numeric: tabular-nums slashed-zero;
   }
+  /* Lucide ships a 2px stroke that reads heavy at small UI sizes — a slightly
+     lighter, uniform stroke is the "tuned icon set" craft signal. */
+  svg.lucide { stroke-width: 1.75; }
 }
 
 /* ── Elevation scale ───────────────────────────────────────────────────────
@@ -170,32 +208,66 @@ button, a, [role="button"], input, textarea, select { touch-action: manipulation
   width: 40px;
   height: 4px;
   border-radius: 9999px;
-  background: rgb(82, 82, 91);
+  background: oklch(0.40 0.016 240);
   margin-inline: auto;
+}
+
+/* ── Canvas atmosphere (baked into the fixed React Flow background) ──────────
+   The glow + vignette live on the `.react-flow` element itself, which is fixed
+   to the viewport (it does NOT pan/zoom — only the inner __viewport transforms).
+   So the atmosphere is part of one OPAQUE canvas surface: dragging a node or
+   panning repaints only the canvas, with zero overlay-compositing cost. This is
+   what keeps interaction perfectly smooth while still looking deep + designed. */
+.react-flow.sf-canvas {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(72% 46% at 50% -6%, oklch(0.74 0.14 197 / 0.09), transparent 72%),
+    radial-gradient(60% 55% at 100% 108%, oklch(0.55 0.09 250 / 0.06), transparent 72%),
+    radial-gradient(135% 130% at 50% 42%, transparent 60%, oklch(0.10 0.01 240 / 0.50) 100%);
+}
+
+/* Radial edge-mask fade for the React Flow dot grid — the single biggest
+   "premium canvas" upgrade. The grid is densest at center, fading at edges. */
+.react-flow__background {
+  -webkit-mask-image: radial-gradient(115% 115% at 50% 45%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(115% 115% at 50% 45%, #000 55%, transparent 100%);
+}
+
+/* Data/metric helpers — big bold value, small dimmed uppercase label. */
+.metric-value { font-variant-numeric: tabular-nums slashed-zero; letter-spacing: -0.01em; }
+.metric-label {
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  color: var(--color-zinc-500);
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgb(63, 63, 70); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: rgb(90, 90, 100); background-clip: padding-box; }
-* { scrollbar-width: thin; scrollbar-color: rgb(63,63,70) transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.36 0.016 240); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.46 0.016 240); background-clip: padding-box; }
+* { scrollbar-width: thin; scrollbar-color: oklch(0.36 0.016 240) transparent; }
 
-/* Crisp cyan focus ring on a dark UI */
-*:focus-visible { outline: 2px solid oklch(0.72 0.14 210); outline-offset: 2px; border-radius: 4px; }
+/* Premium easing curve (easeOutExpo) used across UI motion. */
+:root { --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
 
-/* Text selection picks up the brand cyan */
-::selection { background: oklch(0.72 0.14 210 / 0.30); }
+/* Refined cyan focus ring on a dark UI */
+*:focus-visible { outline: 2px solid oklch(0.74 0.14 197); outline-offset: 2px; border-radius: 4px; }
 
-/* Smooth, consistent micro-interactions on interactive controls (150ms) */
+/* Text selection picks up the refined accent */
+::selection { background: oklch(0.72 0.115 200 / 0.28); }
+
+/* Smooth, consistent micro-interactions on interactive controls (sub-200ms, ease-out) */
 button:not(.react-flow__controls-button), a, [role="button"], [role="tab"], .react-flow__edge {
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease, opacity 0.15s ease, scale 0.12s ease;
+  transition: background-color 0.16s var(--ease-out), border-color 0.16s var(--ease-out),
+    color 0.16s var(--ease-out), box-shadow 0.16s var(--ease-out), opacity 0.16s var(--ease-out),
+    scale 0.12s var(--ease-out);
 }
 button:not([disabled]):active { scale: 0.97; }
 
-.react-flow__node { transition: filter 0.15s ease, scale 0.12s ease; }
-.react-flow__node:hover { filter: brightness(1.06); }
-.react-flow__handle { transition: all 0.15s ease; }
+/* Keep node interaction GPU-cheap: no filter/transition on the node wrapper
+   (those repaint during drag). Hover feedback lives on the node's own border. */
+.react-flow__handle { transition: background-color 0.15s var(--ease-out), border-color 0.15s var(--ease-out); }
 /* Use the standalone `scale` property so React Flow's own translate transform
    (which centers the handle on the node edge) is preserved — overriding
    `transform` here makes the handle jump on hover. */

@@ -14,15 +14,15 @@ function useCountUp(target: number, durationMs = 1000) {
   const [value, setValue] = useState(0);
   const frame = useRef<number | null>(null);
   useEffect(() => {
-    // Respect reduced-motion: jump straight to the value.
-    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setValue(target);
-      return;
-    }
+    // Respect reduced-motion: jump straight to the value (deferred via rAF so
+    // we never call setState synchronously inside the effect body).
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     let start: number | null = null;
     const tick = (t: number) => {
       if (start === null) start = t;
-      const p = Math.min((t - start) / durationMs, 1);
+      const p = reduce ? 1 : Math.min((t - start) / durationMs, 1);
       // easeOut to match the ring's easing
       const eased = 1 - Math.pow(1 - p, 3);
       setValue(Math.round(target * eased));

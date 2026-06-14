@@ -32,6 +32,10 @@ function AnimatedEdgeInner({
   data,
 }: EdgeProps) {
   const isRunning = useSimulationStore((s) => s.isRunning);
+  const hasResult = useSimulationStore((s) => s.result !== null);
+  // Traffic keeps flowing once a simulation has run (not just during the brief
+  // compute window), so the canvas visibly "comes alive" after you Simulate.
+  const flowing = isRunning || hasResult;
   const edgeData = (data ?? {}) as CustomEdgeData;
   const isAsync = edgeData.async === true;
   const protocol = edgeData.protocol;
@@ -58,28 +62,22 @@ function AnimatedEdgeInner({
         markerEnd={markerEnd}
         style={{
           ...style,
-          stroke: isRunning ? "rgb(6, 182, 212)" : "rgb(82, 82, 91)",
-          strokeWidth: 1.5,
+          stroke: flowing ? "rgba(52, 211, 230, 0.55)" : "rgba(150, 165, 195, 0.32)",
+          strokeWidth: flowing ? 1.75 : 1.5,
           ...(isAsync ? { strokeDasharray: "6 4" } : {}),
         }}
       />
-      {/* Animated dots — only render when simulation is running */}
-      {isRunning && (
+      {/* Directional traffic — particles flow source → target along the path. */}
+      {flowing && (
         <>
-          <circle r="2" fill="rgb(6, 182, 212)" opacity="0.8">
-            <animateMotion
-              dur="2s"
-              repeatCount="indefinite"
-              path={edgePath}
-            />
+          <circle r="2.4" fill="#3ad6e6" opacity="0.95">
+            <animateMotion dur="1.6s" repeatCount="indefinite" path={edgePath} />
           </circle>
-          <circle r="1.5" fill="rgb(6, 182, 212)" opacity="0.4">
-            <animateMotion
-              dur="2s"
-              repeatCount="indefinite"
-              path={edgePath}
-              begin="0.7s"
-            />
+          <circle r="2" fill="#3ad6e6" opacity="0.6">
+            <animateMotion dur="1.6s" repeatCount="indefinite" path={edgePath} begin="0.53s" />
+          </circle>
+          <circle r="1.6" fill="#3ad6e6" opacity="0.35">
+            <animateMotion dur="1.6s" repeatCount="indefinite" path={edgePath} begin="1.06s" />
           </circle>
         </>
       )}

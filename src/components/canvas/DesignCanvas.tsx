@@ -164,9 +164,9 @@ export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview,
   return (
     <div ref={reactFlowWrapper} className="relative flex-1 flex flex-col">
       <CanvasTabBar />
-      <div className="relative flex-1">
+      <div className="relative flex-1 bg-background">
       <ReactFlow
-        className="h-full w-full bg-zinc-950"
+        className="sf-canvas h-full w-full"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -193,12 +193,22 @@ export function DesignCanvas({ onPickProblem, onLoadReference, onStartInterview,
         snapToGrid
         snapGrid={[16, 16]}
       >
+        {/* Two-tier grid (fine dots + faint coarse lines), both edge-masked. */}
         <Background
+          id="grid-lines"
+          variant={BackgroundVariant.Lines}
+          gap={120}
+          lineWidth={1}
+          color="rgba(150, 165, 195, 0.05)"
+          className="!bg-transparent"
+        />
+        <Background
+          id="grid-dots"
           variant={BackgroundVariant.Dots}
           gap={20}
           size={1}
-          color="rgba(63, 63, 70, 0.5)"
-          className="!bg-zinc-950"
+          color="rgba(155, 172, 205, 0.24)"
+          className="!bg-transparent"
         />
         <Controls
           className="!rounded-md !border !border-zinc-800 !bg-zinc-900 !shadow-sm [&>button]:!border-zinc-800 [&>button]:!bg-zinc-900 [&>button]:!text-zinc-400 [&>button:hover]:!bg-zinc-800 [&>button:hover]:!text-zinc-200"

@@ -38,14 +38,6 @@ const CATEGORY_BG: Record<string, string> = {
   infrastructure: "bg-cyan-400/10",
 };
 
-const CATEGORY_BORDER: Record<string, string> = {
-  networking: "border-l-blue-400",
-  compute: "border-l-violet-400",
-  storage: "border-l-amber-400",
-  messaging: "border-l-emerald-400",
-  infrastructure: "border-l-cyan-400",
-};
-
 interface ComponentPaletteProps {
   onCreateCustomComponent?: () => void;
   /** Called after a component is added via tap/quick-add (e.g. to close a mobile drawer). */
@@ -188,7 +180,6 @@ export function ComponentPalette({ onCreateCustomComponent, onComponentAdded }: 
                   const Icon = ICON_MAP[item.icon] ?? Server;
                   const accent = CATEGORY_ACCENT[item.category] ?? "text-cyan-400";
                   const iconBg = CATEGORY_BG[item.category] ?? "bg-cyan-400/10";
-                  const borderColor = CATEGORY_BORDER[item.category] ?? "border-l-cyan-400";
                   const concept = CONCEPT_LIBRARY[item.id];
                   const tipText = concept?.whenToUse[0] ?? item.description;
                   const isCustom = customIds.has(item.id);
@@ -201,7 +192,7 @@ export function ComponentPalette({ onCreateCustomComponent, onComponentAdded }: 
                             onDragStart={(e) => handleDragStart(e, item.id)}
                             // Touch devices can't drag-and-drop: tapping the row adds the component
                             onClick={isCoarse ? () => handleQuickAdd(item.id) : undefined}
-                            className={`group flex cursor-grab items-center gap-2 rounded-md border-l-2 px-2 py-2 text-xs text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 active:cursor-grabbing ${borderColor}`}
+                            className="group flex cursor-grab items-center gap-2 rounded-md px-2 py-2 text-xs text-zinc-300 transition-colors hover:bg-zinc-800/80 hover:text-zinc-100 active:cursor-grabbing"
                           >
                             <GripVertical className="h-3 w-3 shrink-0 text-zinc-600 opacity-0 transition-opacity group-hover:opacity-100" />
                             <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md ${iconBg}`}>
@@ -213,7 +204,7 @@ export function ComponentPalette({ onCreateCustomComponent, onComponentAdded }: 
                                 Custom
                               </span>
                             )}
-                            <span className="shrink-0 text-[11px] text-zinc-400">
+                            <span className="shrink-0 font-mono text-[11px] tabular-nums text-zinc-500">
                               {item.maxQPS === Infinity ? "\u221e" : `${(item.maxQPS / 1000).toFixed(0)}k`}
                             </span>
                             <button
